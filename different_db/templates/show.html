@@ -1,0 +1,91 @@
+<head>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+{#    <script type="application/javascript">#}
+{##}
+{##}
+{##}
+{##}
+{#    $(function()#}
+{#    {#}
+{#        search();#}
+{##}
+{#        $('#search').keyup(search);});#}
+{#    function search() {#}
+{#        $.ajax({#}
+{#            type: "POST",#}
+{#            url: "show_all/",#}
+{#            data: {#}
+{#                "search_text": $('#search').val(),#}
+{#                'csrgmiddlewaretoken': $("input[name=csrfmiddlewaretoken]")#}
+{#            },#}
+{#            success: searchSuccess,#}
+{#            dataType: 'html',#}
+{#        });#}
+{#    }#}
+{#    function searchSuccess(data,textStatus,jqXHR) {#}
+{#        $('#search-result').html(data);#}
+{##}
+{#    }#}
+{##}
+{#</script>#}
+
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+</head>
+<table align="center" border="2">
+{% if res %}
+{% for x in res %}
+    <tr><td>{{ x.idno }}</td>
+    <td>{{ x.name }}</td>
+    <td>{{ x.sal }}</td>
+    <td><a href="{% url 'update' %}?idno={{ x.idno }}">update</a> </td>
+    <td><a href="{% url 'delete' %}?idno={{ x.idno }}">delete</a> </td></tr>
+
+{% endfor %}
+{% endif %}
+<td>
+    {% if res.has_previous %}
+        <a href="{% url 'show_details' %}?pageno={{ res.previous_page_number }}">previous</a>
+    {% endif %}
+    {{ res.number }}
+    {% if res.has_next %}
+    <a href="{% url 'show_details' %}?pageno={{ res.next_page_number }}">next</a>
+    {% endif %}</td>
+
+    </table>
+{% if data %}
+    {% for  x in data %}
+        <a href="{% url 'get' name=x.idno %}">{{ x.name }}</a>
+    {% endfor %}
+{% endif %}
+<h3>search</h3>
+{% csrf_token %}
+<input type="text" id="search" name="sear"/>
+<ul >
+    <li id="search-result">
+
+    </li>
+
+</ul>
+<script>
+   $('#search').keyup(function () {
+        var tearm = $("#search").val()
+        console.log(tearm)
+        $.ajax({
+             headers: { "X-CSRFToken": '{{csrf_token}}'},
+            type:'post',
+            url:"{% url 'search' %}",
+            data:{'search':'search',tearm:tearm},
+            success:function (resp) {
+                $('#search-result').html(resp)
+                 $("#search").autocomplete({
+                     source:resp
+                 })
+            }
+         })
+    })
+</script>
+

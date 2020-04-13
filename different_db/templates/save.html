@@ -1,0 +1,8 @@
+<form method="post">
+    {% csrf_token %}
+    <table>
+        {{ student.as_table }}
+    </table>
+    <button type="submit">save</button>
+</form>
+<a href="{% url 'show_details' %}">show_all</a>
